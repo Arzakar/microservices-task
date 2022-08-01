@@ -4,20 +4,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.rntgroup</groupId>
-    <artifactId>microservices-task</artifactId>
-    <version>0.1.0</version>
+    <parent>
+        <artifactId>microservices-task</artifactId>
+        <groupId>com.rntgroup</groupId>
+        <version>0.1.0</version>
+    </parent>
+
+    <artifactId>business-services</artifactId>
 
     <packaging>pom</packaging>
 
     <modules>
-        <module>business-services</module>
-        <module>platform-services</module>
+        <module>one</module>
+        <module>two</module>
+        <module>two-api</module>
+        <module>common</module>
     </modules>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
 
 </project>
