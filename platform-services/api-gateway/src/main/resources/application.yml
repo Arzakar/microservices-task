@@ -1,13 +1,26 @@
 server:
-  port: 8765
+  port: 8766
 
 spring:
   application:
-    name: api-gateway
+    name: api-gateway-service
 
 eureka:
   client:
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
   instance:
+    hostname: localhost
     prefer-ip-address: true
+
+zuul:
+  routes:
+    common-service:
+      path: /common-service/**
+      serviceId: common-service
+  strip-prefix: true
+
+common-service:
+  ribbon:
+    listOfServers: localhost:8081
