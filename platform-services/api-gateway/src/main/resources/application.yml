@@ -1,5 +1,5 @@
 server:
-  port: 8766
+  port: 8765
 
 spring:
   application:
@@ -19,8 +19,19 @@ zuul:
     common-service:
       path: /common-service/**
       serviceId: common-service
+    one-service:
+      path: /one-service/**
+      serviceId: one-service
   strip-prefix: true
+
+ribbon:
+  ConnectTimeout: 60000
+  ReadTimeout: 60000
 
 common-service:
   ribbon:
     listOfServers: localhost:8081
+
+one-service:
+  ribbon:
+    listOfServers: localhost:8082
