@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+
+  graphite:
+    image: graphiteapp/graphite-statsd
+    ports:
+      - "2003:2033"
+
+  discovery:
+    build:
+      context: ./platform-services/discovery
+      dockerfile: target/docker/Dockerfile
+    ports:
+      - "8761:8761"
