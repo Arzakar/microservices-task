@@ -4,15 +4,74 @@ services:
     image: openzipkin/zipkin
     ports:
       - "9411:9411"
+    networks:
+      - localnetwork
 
   graphite:
     image: graphiteapp/graphite-statsd
     ports:
-      - "2003:2033"
+      - "2003:2003"
+    networks:
+      - localnetwork
 
   discovery:
+    container_name: discovery
     build:
       context: ./platform-services/discovery
       dockerfile: target/docker/Dockerfile
     ports:
       - "8761:8761"
+    networks:
+      - localnetwork
+
+  api-gatewya:
+    container_name: api-gateway
+    build:
+      context: ./platform-services/api-gateway
+      dockerfile: target/docker/Dockerfile
+    environment:
+      - eureka.client.service-url.defaultZone=http://discovery:8761/eureka
+    ports:
+      - "8765:8765"
+    depends_on:
+      - discovery
+    networks:
+      - localnetwork
+
+  common:
+    container_name: common
+    build:
+      context: ./business-services/common
+      dockerfile: target/docker/Dockerfile
+    environment:
+      - eureka.client.service-url.defaultZone=http://discovery:8761/eureka
+    ports:
+      - "8081:8081"
+    depends_on:
+      - discovery
+      - zipkin
+      - graphite
+    networks:
+      - localnetwork
+
+  one:
+    container_name: one
+    build:
+      context: ./business-services/one
+      dockerfile: target/docker/Dockerfile
+    environment:
+      - eureka.client.service-url.defaultZone=http://discovery:8761/eureka
+      - graphite.host=graphite
+      - graphite.port=2004
+    ports:
+      - "8082:8082"
+    depends_on:
+      - discovery
+      - zipkin
+      - graphite
+    networks:
+      - localnetwork
+
+networks:
+  localnetwork:
+    driver: bridge

@@ -12,3 +12,7 @@ eureka:
   instance:
     hostname: localhost
     prefer-ip-address: true
+
+graphite:
+  host: localhost
+  port: 2003
