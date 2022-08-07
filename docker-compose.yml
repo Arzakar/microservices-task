@@ -11,6 +11,8 @@ services:
     image: graphiteapp/graphite-statsd
     ports:
       - "2003:2003"
+      - "8080:8080"
+      - "8125:8125/udp"
     networks:
       - localnetwork
 
@@ -19,18 +21,25 @@ services:
     build:
       context: ./platform-services/discovery
       dockerfile: target/docker/Dockerfile
+    environment:
+      - spring.zipkin.base-url=http://zipkin:9411/
     ports:
       - "8761:8761"
     networks:
       - localnetwork
 
-  api-gatewya:
+  api-gateway:
     container_name: api-gateway
     build:
       context: ./platform-services/api-gateway
       dockerfile: target/docker/Dockerfile
     environment:
       - eureka.client.service-url.defaultZone=http://discovery:8761/eureka
+      - spring.zipkin.base-url=http://zipkin:9411/
+      - common-service.ribbon.listOfServers=common:8081
+      - one-service.ribbon.listOfServers=one:8082
+      - two-service.ribbon.listOfServers=two:8083
+      - two-api-service.ribbon.listOfServers=common:8084
     ports:
       - "8765:8765"
     depends_on:
@@ -45,6 +54,7 @@ services:
       dockerfile: target/docker/Dockerfile
     environment:
       - eureka.client.service-url.defaultZone=http://discovery:8761/eureka
+      - spring.zipkin.base-url=http://zipkin:9411/
     ports:
       - "8081:8081"
     depends_on:
@@ -61,10 +71,31 @@ services:
       dockerfile: target/docker/Dockerfile
     environment:
       - eureka.client.service-url.defaultZone=http://discovery:8761/eureka
+      - api-gateway-service.ribbon.listOfServers=api-gateway:8765
+      - spring.zipkin.base-url=http://zipkin:9411/
       - graphite.host=graphite
-      - graphite.port=2004
+      - graphite.port=2003
     ports:
       - "8082:8082"
+    depends_on:
+      - discovery
+      - zipkin
+      - graphite
+    networks:
+      - localnetwork
+
+  two:
+    container_name: two
+    build:
+      context: ./business-services/two
+      dockerfile: target/docker/Dockerfile
+    environment:
+      - eureka.client.service-url.defaultZone=http://discovery:8761/eureka
+      - spring.zipkin.base-url=http://zipkin:9411/
+      - graphite.host=graphite
+      - graphite.port=2003
+    ports:
+      - "8083:8083"
     depends_on:
       - discovery
       - zipkin

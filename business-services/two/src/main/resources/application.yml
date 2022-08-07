@@ -1,9 +1,9 @@
 server:
-  port: 8082
+  port: 8083
 
 spring:
   application:
-    name: one-service
+    name: two-service
   zipkin:
     base-url: http://localhost:9411/
 
@@ -17,14 +17,6 @@ eureka:
 
 graphite:
   metric:
-    prefix: one-service
+    prefix: two-service
   host: localhost
   port: 2003
-
-ribbon:
-  ConnectTimeout: 60000
-  ReadTimeout: 60000
-
-api-gateway-service:
-  ribbon:
-    listOfServers: localhost:8765
