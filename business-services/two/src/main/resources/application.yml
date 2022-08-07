@@ -1,0 +1,22 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: two-service
+  zipkin:
+    base-url: http://localhost:9411/
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+graphite:
+  metric:
+    prefix: two-service
+  host: localhost
+  port: 2003

@@ -3,11 +3,51 @@ server:
 
 spring:
   application:
-    name: api-gateway
+    name: api-gateway-service
+  zipkin:
+    base-url: http://localhost:9411/
 
 eureka:
   client:
+    fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
   instance:
+    hostname: localhost
     prefer-ip-address: true
+
+zuul:
+  routes:
+    common-service:
+      path: /common-service/**
+      serviceId: common-service
+    one-service:
+      path: /one-service/**
+      serviceId: one-service
+    two-service:
+      path: /two-service/**
+      serviceId: two-service
+    two-api-service:
+      path: /two-api/
+      serviceId: two-api
+  strip-prefix: true
+
+ribbon:
+  ConnectTimeout: 60000
+  ReadTimeout: 60000
+
+common-service:
+  ribbon:
+    listOfServers: localhost:8081
+
+one-service:
+  ribbon:
+    listOfServers: localhost:8082
+
+two-service:
+  ribbon:
+    listOfServers: localhost:8083
+
+two-api-service:
+  ribbon:
+    listOfServers: localhost:8084
